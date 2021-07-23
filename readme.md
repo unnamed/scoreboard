@@ -1,5 +1,5 @@
-# unnamed/board ![Build Status](https://img.shields.io/github/workflow/status/unnamed/scoreboard/build/master) [![MIT License](https://img.shields.io/badge/license-MIT-blue)](license.txt)
-unnamed/board *(or µboard)* is a very fast and lightweight library for the creation of
+# unnamed/scoreboard ![Build Status](https://img.shields.io/github/workflow/status/unnamed/scoreboard/build/main) [![MIT License](https://img.shields.io/badge/license-MIT-blue)](license.txt)
+unnamed/scoreboard *(or µboard)* is a very fast and lightweight library for the creation of
 Minecraft scoreboards in the Bukkit API. µboard has an extensible API that can be adapted
 to every Minecraft server version.
 ## Download
