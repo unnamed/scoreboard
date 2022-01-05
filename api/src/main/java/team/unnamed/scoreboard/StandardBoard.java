@@ -2,6 +2,7 @@ package team.unnamed.scoreboard;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
 import team.unnamed.validate.Validate;
 
 import java.lang.ref.WeakReference;
@@ -147,13 +148,7 @@ public class StandardBoard
         if (currentSize > newSize) {
             // remove unnecessary entries
             for (int i = this.entries.size(); i > lines.size(); i--) {
-                int score = i - 1;
-                // remove score
-                handler.removeScore(target, name, FAKE_PLAYER_NAMES[score]);
-                // remove team
-                handler.deleteTeam(target, name + ':' + score);
-
-                this.entries.remove(score);
+                removeLine(i - 1);
             }
             // it must update 'newSize' entries
             toUpdate = newSize;
@@ -167,11 +162,10 @@ public class StandardBoard
 
                 // create the score
                 handler.updateScore(target, name, i, entryName);
-
                 // create the team
                 handler.createTeam(
                     target,
-                    name + ':' + i,
+                    entryName,
                     entry.getPrefix(),
                     entry.getSuffix(),
                     Collections.singleton(entryName)
@@ -189,19 +183,7 @@ public class StandardBoard
         }
 
         for (int i = 0; i < toUpdate; i++) {
-            int score = lines.size() - i - 1;
-            String text = lines.get(score);
-            BoardEntry entry = entries.get(score);
-
-            if (!entry.toString().equals(text)) {
-                BoardEntry newEntry = BoardEntry.split(FAKE_PLAYER_NAMES[i], text);
-                handler.updateTeam(
-                    target,
-                    name + ':' + i,
-                    newEntry.getPrefix(),
-                    newEntry.getSuffix()
-                );
-            }
+            setLine(i, lines.get(lines.size() - i - 1));
         }
     }
 
@@ -214,13 +196,33 @@ public class StandardBoard
     public void setLine(int index, String line) {
         checkNotDeleted();
         checkInRange(index);
+
+        BoardEntry old = entries.get(index);
+        if (!old.toString().equals(line)) {
+            String entryName = FAKE_PLAYER_NAMES[index];
+            BoardEntry newEntry = BoardEntry.split(entryName, line);
+            //just update the text of the team wrapping
+            //the scoreboard score
+            handler.updateTeam(
+                getPlayer(),
+                entryName,
+                newEntry.getPrefix(),
+                newEntry.getSuffix()
+            );
+        }
     }
 
     @Override
     public String removeLine(int index) {
         checkNotDeleted();
         checkInRange(index);
-        return null;
+        Player target = getPlayer();
+        String entryName = FAKE_PLAYER_NAMES[index];
+        // remove score
+        handler.removeScore(target, name, entryName);
+        // remove team
+        handler.deleteTeam(target, entryName);
+        return entries.remove(index).toString();
     }
 
     @Override
@@ -252,5 +254,4 @@ public class StandardBoard
             "Index cannot be negative or greater than line count"
         );
     }
-
 }
