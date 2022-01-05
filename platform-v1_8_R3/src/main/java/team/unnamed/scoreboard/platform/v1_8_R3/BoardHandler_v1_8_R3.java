@@ -354,7 +354,7 @@ public class BoardHandler_v1_8_R3
                         // will read is the team name
                         propertyCursor++;
                         return teamName;
-                    } else if (propertyCursor == 1) {
+                    } else if (propertyCursor == 2) {
                         // after the display name read,
                         // it reads the prefix
                         propertyCursor++;
