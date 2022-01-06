@@ -1,6 +1,7 @@
 package team.unnamed.scoreboard;
 
 import org.bukkit.entity.Player;
+
 import team.unnamed.validate.Validate;
 
 import java.util.HashMap;
@@ -58,4 +59,22 @@ public class BoardRegistry {
         return get(player.getUniqueId());
     }
 
+    /**
+     * Removes the {@link Board} registered for the
+     * given {@code playerId} if present.
+     */
+    public synchronized void remove(UUID playerId) {
+        Validate.isNotNull(playerId, "playerId");
+        registry.remove(playerId);
+    }
+
+    /**
+     * Same as to {@link BoardRegistry#remove(UUID)} but
+     * takes a {@link Player} as parameter and gets
+     * its {@link UUID}
+     */
+    public synchronized void remove(Player player) {
+        Validate.isNotNull(player, "player");
+        remove(player.getUniqueId());
+    }
 }

@@ -1,19 +1,26 @@
-package team.unnamed.scoreboard.platform.v1_8_R3;
+package team.unnamed.scoreboard.platform.v1_16_R3;
 
-import net.minecraft.server.v1_8_R3.Packet;
-import net.minecraft.server.v1_8_R3.PacketDataSerializer;
-import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardDisplayObjective;
-import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardObjective;
-import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
-import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
-import net.minecraft.server.v1_8_R3.PlayerConnection;
+import net.minecraft.server.v1_16_R3.ChatMessage;
+import net.minecraft.server.v1_16_R3.EnumChatFormat;
+import net.minecraft.server.v1_16_R3.IChatBaseComponent;
+import net.minecraft.server.v1_16_R3.IScoreboardCriteria;
+import net.minecraft.server.v1_16_R3.Packet;
+import net.minecraft.server.v1_16_R3.PacketDataSerializer;
+import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardDisplayObjective;
+import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardObjective;
+import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardScore;
+import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardTeam;
+import net.minecraft.server.v1_16_R3.PlayerConnection;
+import net.minecraft.server.v1_16_R3.ScoreboardServer;
+import net.minecraft.server.v1_16_R3.ScoreboardTeamBase;
 
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import team.unnamed.scoreboard.BoardHandler;
 
 import javax.annotation.Nullable;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,9 +28,9 @@ import java.util.Iterator;
 
 /**
  * Version-specific implementation of {@link BoardHandler}
- * for 1.8 minecraft servers
+ * for 1.16 minecraft servers
  */
-public class BoardHandler_v1_8_R3
+public class BoardHandler_v1_16_R3
     implements BoardHandler {
 
     //#region Objective handling
@@ -74,7 +81,7 @@ public class BoardHandler_v1_8_R3
             }
 
             @Override
-            public String c(int length) {
+            public String e(int length) {
                 // method invoked to read the
                 // objective name, length is ignorable
                 return name;
@@ -101,7 +108,7 @@ public class BoardHandler_v1_8_R3
             }
 
             @Override
-            public String c(int length) {
+            public String e(int length) {
                 // method invoked to read the
                 // objective name, length is ignorable
                 return name;
@@ -119,35 +126,10 @@ public class BoardHandler_v1_8_R3
         Packet<?> packet = new PacketPlayOutScoreboardObjective();
         suppressWrite(packet, new PacketDataSerializer(null) {
 
-            // flag determining if the name
-            // was already read
-            private boolean readName;
-
             @Override
-            public String c(int length) {
-                // method invoked to read the
-                // objective name, type and display
-                // name, calls are like:
-                //   1. name = c(16)
-                //   2. display name = c(32)
-                //   3. type = c(16)
-                if (length == 16) {
-                    if (readName) {
-                        // after reading the name
-                        // it asks for the objective
-                        // type, return always "integer"
-                        return "integer";
-                    } else {
-                        readName = true;
-                        // name wasn't read yet, so
-                        // return the name
-                        return name;
-                    }
-                } else {
-                    // return the objective
-                    // display name
-                    return displayName;
-                }
+            public String e(int length) {
+                // return the objective name
+                return name;
             }
 
             @Override
@@ -160,6 +142,19 @@ public class BoardHandler_v1_8_R3
                 return action;
             }
 
+            @Override
+            public IChatBaseComponent h() {
+                // return the objective
+                // display name
+                return new ChatMessage(displayName);
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T extends Enum<T>> T a(Class<T> enumType) {
+                // return the scoreboard objective type
+                return (T) IScoreboardCriteria.EnumScoreboardHealthDisplay.INTEGER;
+            }
         });
         return packet;
     }
@@ -179,7 +174,7 @@ public class BoardHandler_v1_8_R3
             name,
             objectiveName,
             -1, // score isn't required on remove
-            PacketPlayOutScoreboardScore.EnumScoreboardAction.REMOVE
+            ScoreboardServer.Action.REMOVE
         ));
     }
 
@@ -195,7 +190,7 @@ public class BoardHandler_v1_8_R3
             name,
             objectiveName,
             score,
-            PacketPlayOutScoreboardScore.EnumScoreboardAction.CHANGE
+            ScoreboardServer.Action.CHANGE
         ));
     }
 
@@ -203,13 +198,13 @@ public class BoardHandler_v1_8_R3
         @Nullable String playerName,
         String objectiveName,
         int score,
-        PacketPlayOutScoreboardScore.EnumScoreboardAction action
+        ScoreboardServer.Action action
     ) {
         Packet<?> packet = new PacketPlayOutScoreboardScore();
         suppressWrite(packet, new PacketDataSerializer(null) {
 
             @Override
-            public String c(int length) {
+            public String e(int length) {
                 // method invoked to read the
                 // player name and the objective
                 // name, its call order is like:
@@ -232,12 +227,11 @@ public class BoardHandler_v1_8_R3
             }
 
             @Override
-            public int e() {
+            public int i() {
                 // method invoked to read the
                 // score
                 return score;
             }
-
         });
         return packet;
     }
@@ -292,7 +286,7 @@ public class BoardHandler_v1_8_R3
         suppressWrite(packet, new PacketDataSerializer(null) {
 
             @Override
-            public String c(int length) {
+            public String e(int length) {
                 // method invoked to read
                 // the team name, length is
                 // ignorable
@@ -306,7 +300,6 @@ public class BoardHandler_v1_8_R3
                 // 0x1: delete
                 return 0x1;
             }
-
         });
         sendPackets(viewer, packet);
     }
@@ -323,57 +316,39 @@ public class BoardHandler_v1_8_R3
 
             private final Iterator<String> memberIterator = members.iterator();
 
+            // flag determining if the
+            // tag-visibility was already read
+            private byte stringCursor;
+
             // counter for determining what
-            // properties were already read
-            private byte propertyCursor;
+            // components were already read
+            private byte componentCursor;
 
             // flag determining if the read
             // was already read
             private boolean readAction;
 
             @Override
-            public String c(int length) {
-                if (length == 40) {
-                    // if length is 40, return the
-                    // next read member name
-                    return memberIterator.next();
-                } else if (length == 32) {
-                    if (propertyCursor == 1) {
-                        // after the team name read
-                        // the packet reads the display name
-                        propertyCursor++;
-                        return teamName;
-                    } else {
-                        // after most reads, it will
-                        // read the member visibility,
-                        // just return always
-                        return "always";
-                    }
+            public String e(int length) {
+                if (length == 16) {
+                    // if length is 16, return the
+                    // team name
+                    return teamName;
+                } else if (stringCursor == 0) {
+                    // if length is 40 and the tag-visibility
+                    // isn't read yet, return always enum constant
+                    stringCursor++;
+                    return ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS.e;
+                } else if (stringCursor == 1) {
+                    // if the length is 40 and the tag-visibility
+                    // is already read, return always enum constant
+                    stringCursor++;
+                    return ScoreboardTeamBase.EnumTeamPush.ALWAYS.e;
                 } else {
-                    // if length is 16
-                    if (propertyCursor == 0) {
-                        // the first thing the packet
-                        // will read is the team name
-                        propertyCursor++;
-                        return teamName;
-                    } else if (propertyCursor == 2) {
-                        // after the display name read,
-                        // it reads the prefix
-                        propertyCursor++;
-                        return prefix;
-                    } else {
-                        // and then the suffix
-                        propertyCursor++;
-                        return suffix;
-                    }
+                    // the cursor size is 2,
+                    // return the next member name
+                    return memberIterator.next();
                 }
-            }
-
-            @Override
-            public int e() {
-                // method invoked to read the
-                // team members names count
-                return members.size();
             }
 
             @Override
@@ -391,6 +366,39 @@ public class BoardHandler_v1_8_R3
                 }
             }
 
+            @Override
+            public IChatBaseComponent h() {
+                // method invoked to read the
+                // team display name, the prefix
+                // and suffix, it's call order is like:
+                // 1. displayName
+                // 2. prefix
+                // 3. suffix
+                if (componentCursor == 0) {
+                    componentCursor++;
+                    return new ChatMessage(teamName);
+                } else if (componentCursor == 1) {
+                    componentCursor++;
+                    return new ChatMessage(prefix);
+                } else {
+                    return new ChatMessage(suffix);
+                }
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T extends Enum<T>> T a(Class<T> enumType) {
+                // method invoked to read the
+                // packet chat format
+                return (T) EnumChatFormat.RESET;
+            }
+
+            @Override
+            public int i() {
+                // method invoked to read the
+                // team members names count
+                return members.size();
+            }
         });
         return packet;
     }
