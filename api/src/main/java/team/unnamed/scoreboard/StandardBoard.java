@@ -209,6 +209,8 @@ public class StandardBoard
                 newEntry.getPrefix(),
                 newEntry.getSuffix()
             );
+
+            entries.set(index, newEntry);
         }
     }
 
