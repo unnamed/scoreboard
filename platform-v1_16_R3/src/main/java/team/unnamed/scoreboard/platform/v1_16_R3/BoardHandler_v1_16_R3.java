@@ -1,6 +1,18 @@
 package team.unnamed.scoreboard.platform.v1_16_R3;
 
-import net.minecraft.server.v1_16_R3.*;
+import net.minecraft.server.v1_16_R3.ChatMessage;
+import net.minecraft.server.v1_16_R3.EnumChatFormat;
+import net.minecraft.server.v1_16_R3.IChatBaseComponent;
+import net.minecraft.server.v1_16_R3.IScoreboardCriteria;
+import net.minecraft.server.v1_16_R3.Packet;
+import net.minecraft.server.v1_16_R3.PacketDataSerializer;
+import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardDisplayObjective;
+import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardObjective;
+import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardScore;
+import net.minecraft.server.v1_16_R3.PacketPlayOutScoreboardTeam;
+import net.minecraft.server.v1_16_R3.PlayerConnection;
+import net.minecraft.server.v1_16_R3.ScoreboardServer;
+import net.minecraft.server.v1_16_R3.ScoreboardTeamBase;
 
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -339,57 +351,57 @@ public class BoardHandler_v1_16_R3
                 }
             }
 
-        @Override
-        public byte readByte () {
-            // method invoked to read the
-            // packet action, the pack option
-            // data and the color, we just care
-            // about the action, other properties
-            // are set to zero
-            if (!readAction) {
-                readAction = true;
-                return action;
-            } else {
-                return 0;
+            @Override
+            public byte readByte() {
+                // method invoked to read the
+                // packet action, the pack option
+                // data and the color, we just care
+                // about the action, other properties
+                // are set to zero
+                if (!readAction) {
+                    readAction = true;
+                    return action;
+                } else {
+                    return 0;
+                }
             }
-        }
 
-        @Override
-        public IChatBaseComponent h () {
-            // method invoked to read the
-            // team display name, the prefix
-            // and suffix, it's call order is like:
-            // 1. displayName = h()
-            // 2. prefix = h()
-            // 3. suffix = h()
-            if (componentCursor == 0) {
-                componentCursor++;
-                return new ChatMessage(teamName);
-            } else if (componentCursor == 1) {
-                componentCursor++;
-                return new ChatMessage(prefix);
-            } else {
-                return new ChatMessage(suffix);
+            @Override
+            public IChatBaseComponent h() {
+                // method invoked to read the
+                // team display name, the prefix
+                // and suffix, it's call order is like:
+                // 1. displayName
+                // 2. prefix
+                // 3. suffix
+                if (componentCursor == 0) {
+                    componentCursor++;
+                    return new ChatMessage(teamName);
+                } else if (componentCursor == 1) {
+                    componentCursor++;
+                    return new ChatMessage(prefix);
+                } else {
+                    return new ChatMessage(suffix);
+                }
             }
-        }
 
-        @Override
-        @SuppressWarnings("unchecked")
-        public <T extends Enum<T>>T a (Class < T > enumType) {
-            // method invoked to read the
-            // packet chat format
-            return (T) EnumChatFormat.RESET;
-        }
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T extends Enum<T>> T a(Class<T> enumType) {
+                // method invoked to read the
+                // packet chat format
+                return (T) EnumChatFormat.RESET;
+            }
 
-        @Override
-        public int i () {
-            // method invoked to read the
-            // team members names count
-            return members.size();
-        }
-    });
+            @Override
+            public int i() {
+                // method invoked to read the
+                // team members names count
+                return members.size();
+            }
+        });
         return packet;
-}
+    }
     //#endregion
 
     /**
