@@ -7,8 +7,10 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardObjective;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardScore;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
+
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+
 import team.unnamed.scoreboard.BoardHandler;
 
 import javax.annotation.Nullable;
@@ -399,7 +401,8 @@ public class BoardHandler_v1_8_R3
      * {@code serializer} data to the given
      * {@code packet} object suppressing the
      * {@link IOException}
-     * @param packet The wrote packet
+     *
+     * @param packet     The wrote packet
      * @param serializer The data container
      */
     private static void suppressWrite(
@@ -410,7 +413,7 @@ public class BoardHandler_v1_8_R3
             packet.a(serializer);
         } catch (IOException e) {
             // should never happen with valid serializers, but
-            // throw it anyways
+            // throw it anyway
             throw new IllegalStateException(
                 "Cannot write packet data",
                 e
@@ -421,8 +424,9 @@ public class BoardHandler_v1_8_R3
     /**
      * Sends the given {@code packets} to the
      * specified {@code receiver} player
+     *
      * @param receiver The packet receiver
-     * @param packets The sent packets
+     * @param packets  The sent packets
      */
     private static void sendPackets(
         Player receiver,
@@ -435,5 +439,4 @@ public class BoardHandler_v1_8_R3
             connection.sendPacket(packet);
         }
     }
-
 }
