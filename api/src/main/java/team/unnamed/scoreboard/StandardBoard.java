@@ -32,10 +32,11 @@ public class StandardBoard
     private static final String[] FAKE_PLAYER_NAMES;
 
     static {
-        // we can use all the codes from ChatColor enum
+        // use ChatColor codes for entries
+        // invisible prefix
         ChatColor[] colors = ChatColor.values();
-        FAKE_PLAYER_NAMES = new String[colors.length];
-        for (int i = 0; i < colors.length; i++) {
+        FAKE_PLAYER_NAMES = new String[MAX_ENTRIES_SIZE];
+        for (int i = 0; i < MAX_ENTRIES_SIZE; i++) {
             FAKE_PLAYER_NAMES[i] = colors[i].toString();
         }
     }
