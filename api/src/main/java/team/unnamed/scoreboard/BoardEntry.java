@@ -72,7 +72,7 @@ public class BoardEntry {
                     || ChatColor.getByChar(suffix.charAt(1)).isFormat()
             ) {
                 // if the initial suffix characters aren't color codes,
-                // some weird bugs may happen so we need to fix it...
+                // some weird bugs may happen, so we need to fix it...
                 if (prefixLastColors.isEmpty()) {
                     // if no prefix last colors, then use default
                     // since entry name may colorize the suffix
@@ -90,5 +90,4 @@ public class BoardEntry {
 
         return new BoardEntry(prefix, suffix);
     }
-
 }
