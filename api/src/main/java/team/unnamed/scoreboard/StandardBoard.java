@@ -32,10 +32,11 @@ public class StandardBoard
     private static final String[] FAKE_PLAYER_NAMES;
 
     static {
-        // we can use all the codes from ChatColor enum
+        // use ChatColor codes for entries
+        // invisible prefix
         ChatColor[] colors = ChatColor.values();
-        FAKE_PLAYER_NAMES = new String[colors.length];
-        for (int i = 0; i < colors.length; i++) {
+        FAKE_PLAYER_NAMES = new String[MAX_ENTRIES_SIZE];
+        for (int i = 0; i < MAX_ENTRIES_SIZE; i++) {
             FAKE_PLAYER_NAMES[i] = colors[i].toString();
         }
     }
@@ -237,20 +238,20 @@ public class StandardBoard
         checkNotDeleted();
         Player target = getPlayer();
         for (int i = 0; i < entries.size(); i++) {
-            handler.deleteTeam(target, name + ':' + i);
+            handler.deleteTeam(target, FAKE_PLAYER_NAMES[i]);
         }
         handler.removeObjective(target, name);
         this.deleted = true;
     }
 
-    private void checkNotDeleted() {
+    protected void checkNotDeleted() {
         Validate.isState(
             !deleted,
             "Cannot modify deleted scoreboard"
         );
     }
 
-    private void checkInRange(int index) {
+    protected void checkInRange(int index) {
         Validate.isTrue(
             index >= 0 && index < entries.size(),
             "Index cannot be negative or greater than line count"

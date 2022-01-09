@@ -2,9 +2,14 @@ package team.unnamed.scoreboard;
 
 import org.bukkit.entity.Player;
 
+import org.jetbrains.annotations.NotNull;
+
+import team.unnamed.scoreboard.animated.AnimatedBoard;
+import team.unnamed.scoreboard.animated.AnimatedBoardEntry;
 import team.unnamed.validate.Validate;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,7 +19,8 @@ import java.util.UUID;
  * its main purpose is to encapsulate the access to
  * {@link Board} instances
  */
-public class BoardRegistry {
+public class BoardRegistry
+    implements Iterable<Board> {
 
     private final Map<UUID, Board> registry = new HashMap<>();
     private final BoardHandler handler;
@@ -35,6 +41,18 @@ public class BoardRegistry {
             "Cannot create multiple scoreboards for the given player"
         );
         Board board = new StandardBoard(handler, player, title);
+        registry.put(player.getUniqueId(), board);
+        return board;
+    }
+
+    public synchronized Board createAnimated(Player player, AnimatedBoardEntry title) {
+        Validate.isNotNull(player, "player");
+        Validate.isNotNull(title, "title");
+        Validate.isState(
+            !registry.containsKey(player.getUniqueId()),
+            "Cannot create multiple scoreboards for the given player"
+        );
+        Board board = new AnimatedBoard(handler, player, title);
         registry.put(player.getUniqueId(), board);
         return board;
     }
@@ -76,5 +94,11 @@ public class BoardRegistry {
     public synchronized void remove(Player player) {
         Validate.isNotNull(player, "player");
         remove(player.getUniqueId());
+    }
+
+    @NotNull
+    @Override
+    public synchronized Iterator<Board> iterator() {
+        return registry.values().iterator();
     }
 }

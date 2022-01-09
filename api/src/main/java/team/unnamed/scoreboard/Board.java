@@ -12,6 +12,12 @@ import java.util.List;
 public interface Board {
 
     /**
+     * Represents the maximum size
+     * of scoreboard entries
+     */
+    int MAX_ENTRIES_SIZE = 15;
+
+    /**
      * Returns the current title
      * for this scoreboard
      */
@@ -78,5 +84,4 @@ public interface Board {
      * from the player
      */
     void delete();
-
 }
