@@ -238,20 +238,20 @@ public class StandardBoard
         checkNotDeleted();
         Player target = getPlayer();
         for (int i = 0; i < entries.size(); i++) {
-            handler.deleteTeam(target, name + ':' + i);
+            handler.deleteTeam(target, FAKE_PLAYER_NAMES[i]);
         }
         handler.removeObjective(target, name);
         this.deleted = true;
     }
 
-    private void checkNotDeleted() {
+    protected void checkNotDeleted() {
         Validate.isState(
             !deleted,
             "Cannot modify deleted scoreboard"
         );
     }
 
-    private void checkInRange(int index) {
+    protected void checkInRange(int index) {
         Validate.isTrue(
             index >= 0 && index < entries.size(),
             "Index cannot be negative or greater than line count"
