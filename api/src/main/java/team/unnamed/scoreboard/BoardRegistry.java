@@ -45,7 +45,7 @@ public class BoardRegistry
         return board;
     }
 
-    public synchronized Board create(Player player, AnimatedBoardEntry title) {
+    public synchronized Board createAnimated(Player player, AnimatedBoardEntry title) {
         Validate.isNotNull(player, "player");
         Validate.isNotNull(title, "title");
         Validate.isState(
